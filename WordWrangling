@@ -1,0 +1,40 @@
+ extract subsets of a dictionary word list based on a certain criteria.
+ 
+ The n selected words in each set/vector must have the same 1st, 3rd and 4th character as the ith
+ 
+ More concretely, consider the list
+
+KHRSTT,  KHRSTK,  KKTLTK, TTLTTK, TKLTER
+
+From this list, I want a set of all words with the 1st, 3rd, 4th character is the same
+
+{
+  {KHRSTT, KHRSTK},
+  {TTLTTK, TKLTER}
+}
+or
+
+{
+  {KHRSTT, KHRSTK},
+  {TTLTTK, TKLTER},
+  {KKTLTK}
+}
+
+list  <- list('KHRSTT',  'KHRSTK',  'KKTLTK', 'TTLTTK', 'TKLTER')
+
+a <- matrix("0",nrow = length(list),ncol= length(list))  
+
+for (x in 1:length(list)){
+    for (y in 1:length(list)){
+        if( y != x){
+            if(substr(list[x], start = 1, stop = 1) == substr(list[y], start = 1, stop = 1) &
+               substr(list[x], start = 3, stop = 3) == substr(list[y], start = 3, stop = 3) &
+               substr(list[x], start = 4, stop = 4) == substr(list[y], start = 4, stop = 4)){
+                 a[x,x] = as.character(list[x])
+                 a[x,y] = as.character(list[y])
+                }
+        }
+    }
+}
+
+print(a)
