@@ -1,0 +1,47 @@
+I have got the following data.frame:
+
+region    group   probs1   probs2   probs3   probs4     weights
+   1        2       0.2       0.3     0.4       0.1        NA
+   2        4       0.3       0.4     0.15      0.15       NA
+   3        3       0.4       0.1     0.3       0.2        NA
+   4        1       0.7       0.1     0.1       0.1        NA
+   5        1       0.2       0.3     0.4       0.1        NA
+   6        2       0.6       0.1     0.1       0.2        NA
+   7        3       0.7       0.1     0.1       0.1        NA
+   8        4       0.3       0.2     0.1       0.4        NA
+   9        3       0.2       0.1     0.1       0.6        NA
+  10        1       0.1       0.2     0.1       0.6        NA
+What I am going to do is to create a new column in the data.frame called "weights" that is calculated as
+
+if group==1, then weights=probs1/probs1.
+If group==2, then the weights=probs1/probs2.
+If group==3, then the weights=probs1/probs3.
+If group==4, then the weights=probs1/probs4.
+
+
+1st method:
+
+library(dplyr)
+df %>%
+    mutate(weights = case_when(
+        group == 1 ~ probs1 / probs1,
+        group == 2 ~ probs1 / probs2,
+        group == 3 ~ probs1 / probs3,
+        TRUE ~ probs1 / probs4))
+        
+2nd Method:
+
+without case_when
+
+library(dplyr)
+
+data_frame <- data_frame %>%
+  mutate(
+    weights = ifelse(group==1,probs1/probs1,
+              ifelse(group==2,probs1/probs2,
+              ifelse(group==3,probs1/probs3,
+              ifelse(group==4,probs1/probs4,NA))))
+  )
+
+print(data_frame)
+
