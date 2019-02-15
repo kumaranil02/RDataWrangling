@@ -1,0 +1,72 @@
+I have a set of data looks like the following
+
+ID  test date   score
+1   4/1/2001    98
+1   5/9/2001    65
+1   5/23/2001   85
+2   3/21/2001   76
+2   4/8/2001    58
+2   5/22/2001   67
+2   6/15/2001   53
+3   1/15/2001   46
+3   5/30/2001   55
+4   1/8/2001    71
+4   2/14/2001   95
+4   7/15/2001   93
+
+and I would love to transpose it into:
+
+id  test date1  score1  test date2  score2  testdate3   score3  testdate4   score4
+1   4/1/2000    98      5/9/2001    65      5/23/2001   85  .   
+2   3/21/2001   76      4/8/2001    58      5/22/2001   67      6/15/2001   53
+3   1/15/2001   46      5/30/2001   55      .       .   
+4   1/8/2001    71      2/14/2001   95      7/15/2001   93  .  
+
+
+1st Method:
+
+mydf$time <- with(mydf, ave(ID, ID, FUN = seq_along))
+reshape(mydf, direction = "wide", idvar = "ID", timevar = "time")
+
+column oriented transformation can be done in different ways(pivoting-unpivoting) tidyr package has good support for this kind of transformations.
+
+
+2nd: Method
+
+the code:
+
+library(tidyr)
+
+abc <- read.csv("Q12 2018 ACC EURO Registration Report.xlsx")
+test <- abc %>% spread(Registration_dt,counts)
+
+
+View(test)
+
+write.csv(test,file = "test.csv")
+
+for reference:
+http://www.cookbook-r.com/Manipulating_data/Converting_data_between_wide_and_long_format/
+
+3rd Method:
+
+library(dplyr)
+library(DBI)
+library("cdata")
+
+
+
+pct <- cdata::buildPivotControlTableN("To_be_transposed_table_name",
+                                      columnToTakeKeysFrom = key column name,
+                                      columnToTakeValuesFrom = column name holding values of key)
+
+colnames(pct)
+pct <- pct %>%  arrange(key column name)
+
+print(pct)
+test <- cdata::moveValuesToColumnsN(tallTable = "To_be_transposed_table_name",
+                                      keyColumns  = c("colname"),
+                                      columnsToCopy = c("name of columns you want to keep as is"),
+                                      controlTable = pct)
+                                      
+View(test)
