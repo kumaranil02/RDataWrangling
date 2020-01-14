@@ -1,0 +1,32 @@
+library(dplyr)
+
+test <- TD_Merge %>%
+  mutate(
+    seq = ifelse(Value == 'D',1,0)
+  )
+
+test <- test %>% 
+  mutate(
+  seq1 = ifelse(Value != 'D',cumsum(seq),NA)
+  )
+
+dat  <- TD_Merge
+
+dat <- test %>%
+  group_by(seq1) %>%
+  mutate(Seq=1:n())
+
+View(test)
+View(dat)
+
+dat <- dat %>% 
+  mutate(
+    Seq = ifelse(is.na(seq1),NA,Seq)
+  )
+
+dat <- dat %>% group_by(seq1)%>%
+  mutate(
+    SeqN = ifelse(!is.na(seq1),letters,NA)
+  )
+
+plot(x = test$No,y=test$seq)
